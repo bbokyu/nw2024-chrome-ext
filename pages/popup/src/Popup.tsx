@@ -1,5 +1,3 @@
-// pages/popup/src/Popup.tsx
-
 import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
@@ -24,22 +22,23 @@ const Popup = () => {
       </header>
 
       <div className="p-4">
-        {pageHTML && (
-          <div className="mt-4">
-            <h3 className="font-bold">Extracted Page HTML:</h3>
-            <textarea value={pageHTML} readOnly rows={10} cols={30} className="w-full p-2 border" />
-          </div>
-        )}
-        {screenshotUrl && (
-          <div className="mt-4">
-            <h3 className="font-bold">Screenshot:</h3>
-            <img src={screenshotUrl} alt="Screenshot" style={{ maxWidth: '100%' }} />
-          </div>
-        )}
+        {' '}
         {musicRecommendation && (
           <div className="mt-4">
             <h3 className="font-bold">Music Recommendation:</h3>
             <p>{musicRecommendation}</p>
+          </div>
+        )}
+        {/* {pageHTML && (
+          <div className="mt-4">
+            <h3 className="font-bold">Extracted Page HTML:</h3>
+            <textarea value={pageHTML} readOnly rows={10} cols={30} className="w-full p-2 border" />
+          </div>
+        )} */}
+        {screenshotUrl && (
+          <div className="mt-4">
+            <h3 className="font-bold">Screenshot:</h3>
+            <img src={screenshotUrl} alt="Screenshot" style={{ maxWidth: '100%' }} />
           </div>
         )}
       </div>
