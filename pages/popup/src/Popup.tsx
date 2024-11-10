@@ -2,60 +2,64 @@ import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import type { ComponentPropsWithoutRef } from 'react';
-
-const notificationOptions = {
-  type: 'basic',
-  iconUrl: chrome.runtime.getURL('icon-34.png'),
-  title: 'Injecting content script error',
-  message: 'You cannot inject script here!',
-} as const;
+import { useState } from 'react';
 
 const Popup = () => {
+  const [pageHTML, setPageHTML] = useState('');
+  const [screenshotUrl, setScreenshotUrl] = useState('');
+
   const theme = useStorage(exampleThemeStorage);
   const isLight = theme === 'light';
   const logo = isLight ? 'popup/logo_vertical.svg' : 'popup/logo_vertical_dark.svg';
-  const goGithubSite = () =>
-    chrome.tabs.create({ url: 'https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite' });
 
-  const injectContentScript = async () => {
-    const [tab] = await chrome.tabs.query({ currentWindow: true, active: true });
+  const takeScreenshot = () => {
+    chrome.runtime.sendMessage({ type: 'TAKE_SCREENSHOT' }, response => {
+      setScreenshotUrl(response.screenshotUrl);
+    });
+  };
 
-    if (tab.url!.startsWith('about:') || tab.url!.startsWith('chrome:')) {
-      chrome.notifications.create('inject-error', notificationOptions);
-    }
-
-    await chrome.scripting
-      .executeScript({
-        target: { tabId: tab.id! },
-        files: ['/content-runtime/index.iife.js'],
-      })
-      .catch(err => {
-        // Handling errors related to other paths
-        if (err.message.includes('Cannot access a chrome:// URL')) {
-          chrome.notifications.create('inject-error', notificationOptions);
-        }
-      });
+  const takeHTML = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'GET_PAGE_HTML' }, response => {
+          if (chrome.runtime.lastError) {
+            console.error('Error sending message:', chrome.runtime.lastError);
+            return;
+          }
+          if (response?.html) {
+            setPageHTML(response.html);
+          } else {
+            console.error('No response received for GET_PAGE_HTML');
+          }
+        });
+      }
+    });
   };
 
   return (
-    <div className={`App ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
+    <div className={`App ${isLight ? 'bg-slate-50' : 'bg-gray-800'} h-screen overflow-auto`}>
       <header className={`App-header ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
-        <button onClick={goGithubSite}>
-          <img src={chrome.runtime.getURL(logo)} className="App-logo" alt="logo" />
-        </button>
-        <p>
-          Edit <code>pages/popup/src/Popup.tsx</code>
-        </p>
-        <button
-          className={
-            'font-bold mt-4 py-1 px-4 rounded shadow hover:scale-105 ' +
-            (isLight ? 'bg-blue-200 text-black' : 'bg-gray-700 text-white')
-          }
-          onClick={injectContentScript}>
-          Click to inject Content Script
-        </button>
         <ToggleButton>Toggle theme</ToggleButton>
+
+        <img src={chrome.runtime.getURL(logo)} className="App-logo" alt="logo" />
       </header>
+
+      <div className="h-screen overflow-auto ">
+        <button onClick={takeHTML}>Extract Page HTML</button> <br />
+        <button onClick={takeScreenshot}>Take Screenshot</button>
+        {pageHTML && (
+          <div className="mt-4">
+            <h3>Extracted Page HTML:</h3>
+            <textarea value={pageHTML} readOnly rows={10} cols={20} />
+          </div>
+        )}
+        {screenshotUrl && (
+          <div className="mt-4">
+            <h3>Screenshot:</h3>
+            <img src={screenshotUrl} alt="Screenshot" style={{ maxWidth: '100%' }} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -67,7 +71,7 @@ const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
       className={
         props.className +
         ' ' +
-        'font-bold mt-4 py-1 px-4 rounded shadow hover:scale-105 ' +
+        'font-bold py-1 px-4 rounded shadow hover:scale-105 ' +
         (theme === 'light' ? 'bg-white text-black shadow-black' : 'bg-black text-white')
       }
       onClick={exampleThemeStorage.toggle}>
