@@ -7,6 +7,11 @@
   text-align: center;
   height: 100%;
   padding: 1rem;
+  background: linear-gradient(0deg, #2F273D, #7F68A3); /* light purple to dark purple */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
 }
 
 .App-logo {
@@ -27,4 +32,18 @@ code {
   background: rgba(148, 163, 184, 0.5);
   border-radius: 0.25rem;
   padding: 0.2rem 0.5rem;
+}
+
+/* Button styling */
+.image-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.image-button:hover .responsive-image {
+  transform: scale(1.25); /* Slightly scale up the image on hover */
+  transition: transform 0.2s ease-in-out;
 }
