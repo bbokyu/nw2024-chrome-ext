@@ -8,7 +8,7 @@ exampleThemeStorage.get().then(theme => {
 // chrome-extension/src/background/index.ts
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'TAKE_SCREENSHOT') {
-    chrome.tabs.captureVisibleTab({ format: 'png' }, dataUrl => {
+    chrome.tabs.captureVisibleTab({ format: 'jpeg' }, dataUrl => {
       if (chrome.runtime.lastError) {
         console.error('Error capturing screenshot:', chrome.runtime.lastError);
         sendResponse({ screenshotUrl: null });
