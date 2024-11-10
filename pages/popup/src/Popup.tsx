@@ -1,40 +1,19 @@
+// pages/popup/src/Popup.tsx
+
 import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import type { ComponentPropsWithoutRef } from 'react';
-import { useState } from 'react';
+import React from 'react';
+
+import { useGetVibes } from './useGetVibes';
 
 const Popup = () => {
-  const [pageHTML, setPageHTML] = useState('');
-  const [screenshotUrl, setScreenshotUrl] = useState('');
+  const { pageHTML, screenshotUrl, musicRecommendation } = useGetVibes();
 
   const theme = useStorage(exampleThemeStorage);
   const isLight = theme === 'light';
   const logo = isLight ? 'popup/logo_vertical.svg' : 'popup/logo_vertical_dark.svg';
-
-  const takeScreenshot = () => {
-    chrome.runtime.sendMessage({ type: 'TAKE_SCREENSHOT' }, response => {
-      setScreenshotUrl(response.screenshotUrl);
-    });
-  };
-
-  const takeHTML = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: 'GET_PAGE_HTML' }, response => {
-          if (chrome.runtime.lastError) {
-            console.error('Error sending message:', chrome.runtime.lastError);
-            return;
-          }
-          if (response?.html) {
-            setPageHTML(response.html);
-          } else {
-            console.error('No response received for GET_PAGE_HTML');
-          }
-        });
-      }
-    });
-  };
 
   return (
     <div className={`App ${isLight ? 'bg-slate-50' : 'bg-gray-800'} h-screen overflow-auto`}>
@@ -44,19 +23,23 @@ const Popup = () => {
         <img src={chrome.runtime.getURL(logo)} className="App-logo" alt="logo" />
       </header>
 
-      <div className="h-screen overflow-auto ">
-        <button onClick={takeHTML}>Extract Page HTML</button> <br />
-        <button onClick={takeScreenshot}>Take Screenshot</button>
+      <div className="p-4">
         {pageHTML && (
           <div className="mt-4">
-            <h3>Extracted Page HTML:</h3>
-            <textarea value={pageHTML} readOnly rows={10} cols={20} />
+            <h3 className="font-bold">Extracted Page HTML:</h3>
+            <textarea value={pageHTML} readOnly rows={10} cols={30} className="w-full p-2 border" />
           </div>
         )}
         {screenshotUrl && (
           <div className="mt-4">
-            <h3>Screenshot:</h3>
+            <h3 className="font-bold">Screenshot:</h3>
             <img src={screenshotUrl} alt="Screenshot" style={{ maxWidth: '100%' }} />
+          </div>
+        )}
+        {musicRecommendation && (
+          <div className="mt-4">
+            <h3 className="font-bold">Music Recommendation:</h3>
+            <p>{musicRecommendation}</p>
           </div>
         )}
       </div>
@@ -80,4 +63,4 @@ const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
   );
 };
 
-export default withErrorBoundary(withSuspense(Popup, <div> Loading ... </div>), <div> Error Occur </div>);
+export default withErrorBoundary(withSuspense(Popup, <div>Loading...</div>), <div>Error Occurred</div>);
