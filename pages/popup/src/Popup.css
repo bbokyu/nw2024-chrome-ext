@@ -6,12 +6,14 @@
   right: 0;
   text-align: center;
   height: 100%;
-  padding: 1rem;
+  padding: 0px;
   background: linear-gradient(0deg, #2F273D, #7F68A3); /* light purple to dark purple */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  overflow: hidden;
   width: 100%;
+  transition: all 0.5s ease-in-out;
 }
 
 .App-logo {
@@ -36,14 +38,26 @@ code {
 
 /* Button styling */
 .image-button {
+  position: absolute; /* Positioning relative to the nearest positioned ancestor */
+  top: center; /* Adjust the top margin */
+  right: center; /* Adjust the right margin */
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   display: inline-block;
+  transition: transform 0.5s ease;
 }
 
-.image-button:hover .responsive-image {
+
+.image-button:hover {
   transform: scale(1.25); /* Slightly scale up the image on hover */
-  transition: transform 0.2s ease-in-out;
+}
+
+.header {
+  position: absolute;
+  top: 10%; /* 20% from the top of the window */
+  font-size: 50px;
+  font-family: 'Plus Jakarta Sans';
+  color: #FFFFFF;
 }
