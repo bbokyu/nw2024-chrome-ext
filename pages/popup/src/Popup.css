@@ -113,3 +113,10 @@
     justify-content: center; /* Center the content vertically and horizontally */
     font-size: 0.75rem;
   }
+
+  .gradient-line {
+    height: 2%; /* Adjust the thickness of the line */
+    background: linear-gradient(to right, gray, #00aaff);
+    width: 90%;
+    border: none;
+  }

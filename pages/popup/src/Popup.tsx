@@ -15,12 +15,15 @@ const Popup = () => {
   // const theme = useStorage(exampleThemeStorage);
   // const isLight = theme === 'light';
 
+  const [showPlay, setPlay] = useState(true);
   const xsymbol = 'popup/xsymbol.svg';
   const skip_button = 'popup/skip.svg';
-  const play_button = 'popup/play.svg';
-  const logo_active = 'popup/logo_active.svg';
+  const play_button = showPlay ? 'popup/play.svg' : 'popup/pause.svg';
   const [showMain, setShowMain] = useState(true);
+  const logo_active = 'popup/logo_active.svg';
+
   const onImageClick = () => setShowMain(!showMain);
+  const onPlayPause = () => setPlay(!showPlay);
   // const nextSong = () => setShowMain(!showMain);
 
   const Active = () => {
@@ -42,11 +45,18 @@ const Popup = () => {
           <img src={chrome.runtime.getURL(play_button)} className="play-button" alt="play" />
         </button>
         <button
+          style={{ position: 'absolute', top: '75%', left: '50%', transform: 'translate(-50%, -50%)' }}
+          className="play-button"
+          onClick={onPlayPause}>
+          <img src={chrome.runtime.getURL(play_button)} className="play-button" alt="play" />
+        </button>
+        <button
           style={{ position: 'absolute', top: '77%', left: '65%', transform: 'translate(-50%, -50%)' }}
           className="skip-button"
           onClick={onImageClick}>
           <img src={chrome.runtime.getURL(skip_button)} className="skip-button" alt="skip" />
         </button>
+        <div style={{ position: 'absolute', top: '59%', left: '5%' }} className="gradient-line"></div>
       </div>
     );
   };
