@@ -9,7 +9,7 @@
   text-align: center;
   height: 100%;
   padding: 0;
-  background: linear-gradient(0deg, #2F273D, #7F68A3); /* light purple to dark purple */
+  background: #2F273D; /* light purple to dark purple */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -61,22 +61,38 @@
 
 /* CSS for the exit button */
 .exit-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: transparent; /* Transparent background */
-  color: red; /* Red text */
-  font-size: 20px; /* Size of the cross */
-  font-weight: bold;
-  padding: 5px 5px; /* Space around the text */
-  cursor: pointer; /* Pointer cursor on hover */
-  border-radius: 3px; /* Rounded corners */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s, color 0.3s;
+  position: relative;
+  top: -35%;
+  left: 37%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;
+
 }
 .exit-button:hover {
-  transform: scale(1.25); /* Slightly scale up the image on hover */
-  transition: background-color 0.5s, color 0.3s;
+  transform: scale(1.15); /* Slightly scale up the image on hover */
+  transition: transform 0.5s ease; /* Smooth hover effect */
+}
+
+.App-active {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center the content vertically and horizontally */
+  font-size: 0.75rem;
+}
+
+.logo-active {
+  width: 70px; /* Ensure the image inside the button has a fixed width */
+  height: auto; /* Maintain aspect ratio */
+  position: absolute;
+  top: 1%;
+  left: 1%;
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline-block;
 }

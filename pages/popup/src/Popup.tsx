@@ -15,28 +15,27 @@ const Popup = () => {
   // const theme = useStorage(exampleThemeStorage);
   // const isLight = theme === 'light';
 
-  const logo = 'popup/logo.svg';
+  const xsymbol = 'popup/xsymbol.svg';
+  const logo_active = 'popup/logo_active.svg';
   const [showMain, setShowMain] = useState(true);
   const onImageClick = () => setShowMain(!showMain);
 
   const Active = () => {
     return (
-      <div className={`App`}>
-        <header className={`App-header`}>
-          <h1 className="header">Aurora2</h1>
-          <button className="exit-button" onClick={onImageClick}>
-            ×
-          </button>
-        </header>
+      <div className={`App-active`}>
+        <img src={chrome.runtime.getURL(logo_active)} className="logo-active" alt="logo" />
+        <button className="exit-button" onClick={onImageClick}>
+          <img src={chrome.runtime.getURL(xsymbol)} className="exit-button" alt="exit" />
+        </button>
       </div>
     );
   };
   const Main = () => {
     return (
       <header className={`App-header`}>
-        <h1 className="header">Aurora1</h1>
+        <h1 className="header">Aurora</h1>
         <button className="image-button" onClick={onImageClick}>
-          <img src={chrome.runtime.getURL(logo)} className="image-button" alt="logo" />
+          <img src={chrome.runtime.getURL(logo_active)} className="image-button" alt="logo" />
         </button>
       </header>
     );
