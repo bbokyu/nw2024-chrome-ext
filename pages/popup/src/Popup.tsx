@@ -4,7 +4,7 @@ import '@src/Popup.css';
 import { withErrorBoundary, withSuspense } from '@extension/shared';
 // import { exampleThemeStorage } from '@extension/storage';
 // import type { ComponentPropsWithoutRef } from 'react';
-import React from 'react';
+import active from './active';
 
 // import { useGetVibes } from './useGetVibes';
 
