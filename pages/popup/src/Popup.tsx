@@ -16,16 +16,36 @@ const Popup = () => {
   // const isLight = theme === 'light';
 
   const xsymbol = 'popup/xsymbol.svg';
+  const skip_button = 'popup/skip.svg';
+  const play_button = 'popup/play.svg';
   const logo_active = 'popup/logo_active.svg';
   const [showMain, setShowMain] = useState(true);
   const onImageClick = () => setShowMain(!showMain);
+  // const nextSong = () => setShowMain(!showMain);
 
   const Active = () => {
     return (
-      <div className={`App-active`}>
-        <img src={chrome.runtime.getURL(logo_active)} className="logo-active" alt="logo" />
-        <button className="exit-button" onClick={onImageClick}>
+      <div className={'App-active'}>
+        <img
+          style={{ position: 'absolute', top: '0%', left: '0%', width: '70px', height: 'autofill' }}
+          src={chrome.runtime.getURL(logo_active)}
+          className="logo-active"
+          alt="logo"
+        />
+        <button style={{ position: 'absolute', top: '5%', right: '5%' }} className="exit-button" onClick={onImageClick}>
           <img src={chrome.runtime.getURL(xsymbol)} className="exit-button" alt="exit" />
+        </button>
+        <button
+          style={{ position: 'absolute', top: '75%', left: '50%', transform: 'translate(-50%, -50%)' }}
+          className="play-button"
+          onClick={onImageClick}>
+          <img src={chrome.runtime.getURL(play_button)} className="play-button" alt="play" />
+        </button>
+        <button
+          style={{ position: 'absolute', top: '77%', left: '65%', transform: 'translate(-50%, -50%)' }}
+          className="skip-button"
+          onClick={onImageClick}>
+          <img src={chrome.runtime.getURL(skip_button)} className="skip-button" alt="skip" />
         </button>
       </div>
     );

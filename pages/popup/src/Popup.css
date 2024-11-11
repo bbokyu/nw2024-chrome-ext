@@ -59,11 +59,7 @@
   height: auto; /* Maintain aspect ratio */
 }
 
-/* CSS for the exit button */
 .exit-button {
-  position: relative;
-  top: -35%;
-  left: 37%;
   background: none;
   border: none;
   padding: 0;
@@ -73,26 +69,47 @@
 }
 .exit-button:hover {
   transform: scale(1.15); /* Slightly scale up the image on hover */
-  transition: transform 0.5s ease; /* Smooth hover effect */
+  transition: transform 0.5s ease;
 }
 
-.App-active {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; /* Center the content vertically and horizontally */
-  font-size: 0.75rem;
-}
+.play-button {
+    position: relative;
+    top: 15%;
+    left: 1%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
 
-.logo-active {
-  width: 70px; /* Ensure the image inside the button has a fixed width */
-  height: auto; /* Maintain aspect ratio */
-  position: absolute;
-  top: 1%;
-  left: 1%;
-  background: none;
-  border: none;
-  padding: 0;
-  display: inline-block;
-}
+  }
+  .play-button:hover {
+    transform: scale(1.15);
+    transition: transform 0.5s ease;
+  }
+
+  .skip-button {
+    position: relative;
+    top: 4%;
+    left: 15%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+
+  }
+  .skip-button:hover {
+    transform: scale(1.15);
+    transition: transform 0.5s ease;
+  }
+
+
+  .App-active {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center the content vertically and horizontally */
+    font-size: 0.75rem;
+  }
