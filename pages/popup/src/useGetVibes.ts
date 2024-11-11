@@ -87,7 +87,7 @@ export function useGetVibes() {
             // we only call the API if we have a screenshot, html is optional
             if (screenshot) {
               setScreenshotUrl(screenshot);
-              sendDataToAPI(html, screenshot);
+              // sendDataToAPI(html, screenshot);
             }
           });
         }
