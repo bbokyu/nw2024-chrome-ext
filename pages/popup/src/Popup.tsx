@@ -1,10 +1,14 @@
+// pages/popup/src/Popup.tsx
+
 import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import type { ComponentPropsWithoutRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 
 import { useGetVibes } from './useGetVibes';
+import { getRandomSong, Genre } from './genres';
 
 const Popup = () => {
   const { pageHTML, screenshotUrl, musicRecommendation } = useGetVibes();
@@ -13,22 +17,43 @@ const Popup = () => {
   const isLight = theme === 'light';
   const logo = isLight ? 'popup/logo_vertical.svg' : 'popup/logo_vertical_dark.svg';
 
+  // State to manage the current genre
+  const [genre, setGenre] = useState<Genre>('sad'); // Initialize to 'sad' or any default genre
+
+  // Function to sanitize musicRecommendation
+  const sanitizeGenre = (str: string): Genre | null => {
+    // Remove leading and trailing punctuation and whitespace
+    const sanitized = str.replace(/^[^\w]+|[^\w]+$/g, '').toLowerCase() as Genre;
+    // Check if the sanitized string matches one of the predefined genres
+    const validGenres: Genre[] = ['happy', 'calm', 'sad', 'energetic', 'dramatic', 'romantic', 'focus'];
+    return validGenres.includes(sanitized) ? sanitized : null;
+  };
+
+  // Effect to update genre based on musicRecommendation
+  useEffect(() => {
+    if (musicRecommendation) {
+      const newGenre = sanitizeGenre(musicRecommendation);
+      if (newGenre) {
+        setGenre(newGenre);
+      } else {
+        console.warn(`Invalid music recommendation: "${musicRecommendation}"`);
+        // Optionally, set to a default genre if the recommendation is invalid
+        // setGenre('happy');
+      }
+    }
+  }, [musicRecommendation]);
+
   return (
     <div className={`App ${isLight ? 'bg-slate-50' : 'bg-gray-800'} h-screen overflow-auto`}>
       <header className={`App-header ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
-        <ToggleButton>Toggle theme</ToggleButton>
+        {/* <ToggleButton>Toggle theme</ToggleButton> */}
 
         <img src={chrome.runtime.getURL(logo)} className="App-logo" alt="logo" />
       </header>
 
+      <AudioButton genre={genre}>Play Music!</AudioButton>
+
       <div className="p-4">
-        {' '}
-        {musicRecommendation && (
-          <div className="mt-4">
-            <h3 className="font-bold">Music Recommendation:</h3>
-            <p>{musicRecommendation}</p>
-          </div>
-        )}
         {/* {pageHTML && (
           <div className="mt-4">
             <h3 className="font-bold">Extracted Page HTML:</h3>
@@ -41,24 +66,95 @@ const Popup = () => {
             <img src={screenshotUrl} alt="Screenshot" style={{ maxWidth: '100%' }} />
           </div>
         )}
+        {musicRecommendation && (
+          <div className="mt-4">
+            <h3 className="font-bold">Music Recommendation:</h3>
+            <p>{musicRecommendation}</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
-  const theme = useStorage(exampleThemeStorage);
-  return (
-    <button
-      className={
-        props.className +
-        ' ' +
-        'font-bold py-1 px-4 rounded shadow hover:scale-105 ' +
-        (theme === 'light' ? 'bg-white text-black shadow-black' : 'bg-black text-white')
+const AudioButton = (props: ComponentPropsWithoutRef<'button'> & { genre: Genre }) => {
+  const { genre, children, ...restProps } = props;
+
+  const [audioFile, setAudioFile] = useState(getRandomSong(genre));
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const audioRef = useRef(new Audio(audioFile));
+  const fadeDuration = 1000; // duration in ms for fade in/out
+
+  const fadeOut = async () => {
+    for (let volume = 1; volume > 0; volume -= 0.1) {
+      audioRef.current.volume = volume;
+      await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+    }
+    audioRef.current.pause();
+    audioRef.current.volume = 1; // reset volume for the next track
+  };
+
+  const fadeIn = async () => {
+    audioRef.current.volume = 0;
+    audioRef.current.play();
+    for (let volume = 0; volume <= 1; volume += 0.1) {
+      audioRef.current.volume = volume;
+      await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+    }
+  };
+
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
       }
-      onClick={exampleThemeStorage.toggle}>
-      {props.children}
-    </button>
+    }
+  };
+
+  useEffect(() => {
+    if (isPlaying) {
+      // If a song is playing, fade out the current song first
+      fadeOut().then(() => {
+        // After fade out, switch to the new genre's song
+        const newAudioFile = getRandomSong(genre);
+        setAudioFile(newAudioFile);
+        audioRef.current.src = newAudioFile;
+        fadeIn();
+      });
+    } else {
+      // If not playing, simply switch the audio source
+      const newAudioFile = getRandomSong(genre);
+      setAudioFile(newAudioFile);
+      audioRef.current.src = newAudioFile;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [genre]); // Trigger when genre changes
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    const handleAudioEnd = () => setIsPlaying(false);
+    audio.addEventListener('ended', handleAudioEnd);
+
+    return () => {
+      audio.removeEventListener('ended', handleAudioEnd);
+    };
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <button
+        className={
+          props.className + ' ' + 'font-bold py-2 px-6 rounded shadow hover:scale-105 transition-transform duration-200'
+        }
+        onClick={handlePlayPause}>
+        {isPlaying ? 'Pause' : 'Play'} {props.children}
+      </button>
+    </div>
   );
 };
 
