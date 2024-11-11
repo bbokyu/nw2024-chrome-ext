@@ -1,3 +1,5 @@
+/* pages/popup/src/Popup.css */
+
 .App {
   position: absolute;
   top: 0;
@@ -6,7 +8,7 @@
   right: 0;
   text-align: center;
   height: 100%;
-  padding: 0px;
+  padding: 0;
   background: linear-gradient(0deg, #2F273D, #7F68A3); /* light purple to dark purple */
   background-size: cover;
   background-repeat: no-repeat;
@@ -17,8 +19,9 @@
 }
 
 .App-logo {
-  height: 50vmin;
-  margin-bottom: 1rem;
+  width: 100px; /* Set a fixed size for the logo */
+  height: auto; /* Maintain aspect ratio */
+  transition: transform 0.3s ease-in-out;
 }
 
 .App-header {
@@ -26,38 +29,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center; /* Center the content vertically and horizontally */
   font-size: 0.75rem;
 }
 
-code {
-  background: rgba(148, 163, 184, 0.5);
-  border-radius: 0.25rem;
-  padding: 0.2rem 0.5rem;
+.header {
+  font-size: 50px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #FFFFFF;
+  margin-bottom: 20px; /* Adds space between the text and button */
 }
 
-/* Button styling */
 .image-button {
-  position: absolute; /* Positioning relative to the nearest positioned ancestor */
-  top: center; /* Adjust the top margin */
-  right: center; /* Adjust the right margin */
+  position: relative;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   display: inline-block;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease; /* Smooth hover effect */
 }
-
 
 .image-button:hover {
   transform: scale(1.25); /* Slightly scale up the image on hover */
 }
 
-.header {
-  position: absolute;
-  top: 10%; /* 20% from the top of the window */
-  font-size: 50px;
-  font-family: 'Plus Jakarta Sans';
-  color: #FFFFFF;
+.image-button img {
+  width: 100px; /* Ensure the image inside the button has a fixed width */
+  height: auto; /* Maintain aspect ratio */
 }

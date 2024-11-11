@@ -6,13 +6,10 @@ import { withErrorBoundary, withSuspense } from '@extension/shared';
 // import type { ComponentPropsWithoutRef } from 'react';
 import Popup from './Popup';
 
-// import { useGetVibes } from './useGetVibes';
+import { useState } from 'react';
 
 const active = () => {
   const logo = 'popup/logo.svg';
-  const onImageClick = () => {
-    // Handle the button click (e.g., open a new tab or show a message)
-  };
 
   return (
     <div className={`App`}>
