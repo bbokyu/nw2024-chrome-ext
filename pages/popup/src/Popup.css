@@ -51,10 +51,32 @@
 }
 
 .image-button:hover {
-  transform: scale(1.25); /* Slightly scale up the image on hover */
+  transform: scale(1.15); /* Slightly scale up the image on hover */
 }
 
 .image-button img {
-  width: 100px; /* Ensure the image inside the button has a fixed width */
+  width: 130px; /* Ensure the image inside the button has a fixed width */
   height: auto; /* Maintain aspect ratio */
+}
+
+/* CSS for the exit button */
+.exit-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: transparent; /* Transparent background */
+  color: red; /* Red text */
+  font-size: 20px; /* Size of the cross */
+  font-weight: bold;
+  padding: 5px 5px; /* Space around the text */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 3px; /* Rounded corners */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+.exit-button:hover {
+  transform: scale(1.25); /* Slightly scale up the image on hover */
+  transition: background-color 0.5s, color 0.3s;
 }

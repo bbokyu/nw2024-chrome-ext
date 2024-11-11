@@ -24,6 +24,9 @@ const Popup = () => {
       <div className={`App`}>
         <header className={`App-header`}>
           <h1 className="header">Aurora2</h1>
+          <button className="exit-button" onClick={onImageClick}>
+            ×
+          </button>
         </header>
       </div>
     );
