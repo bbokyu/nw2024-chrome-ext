@@ -178,24 +178,42 @@ const AudioButton = (props: ComponentPropsWithoutRef<'button'> & { genre: Genre 
   const [audioFile, setAudioFile] = useState(getRandomSong(genre));
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const audioRef = useRef(new Audio(audioFile));
+  // Initialize audioRef without an Audio instance
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeDuration = 1000; // duration in ms for fade in/out
 
-  const fadeOut = async () => {
-    for (let volume = 1; volume > 0; volume -= 0.1) {
-      audioRef.current.volume = volume;
-      await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+  // Create a new Audio instance whenever audioFile changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
     }
-    audioRef.current.pause();
-    audioRef.current.volume = 1; // reset volume for the next track
+    audioRef.current = new Audio(audioFile);
+    audioRef.current.volume = 1; // Reset volume
+    if (isPlaying) {
+      audioRef.current.play();
+    }
+  }, [audioFile]);
+
+  const fadeOut = async () => {
+    if (audioRef.current) {
+      for (let volume = 1; volume >= 0; volume -= 0.1) {
+        audioRef.current.volume = volume;
+        await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+      }
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.volume = 1; // Reset volume for the next track
+    }
   };
 
   const fadeIn = async () => {
-    audioRef.current.volume = 0;
-    audioRef.current.play();
-    for (let volume = 0; volume <= 1; volume += 0.1) {
-      audioRef.current.volume = volume;
-      await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+    if (audioRef.current) {
+      audioRef.current.volume = 0;
+      audioRef.current.play();
+      for (let volume = 0; volume <= 1; volume += 0.1) {
+        audioRef.current.volume = volume;
+        await new Promise(resolve => setTimeout(resolve, fadeDuration / 10));
+      }
     }
   };
 
@@ -211,40 +229,40 @@ const AudioButton = (props: ComponentPropsWithoutRef<'button'> & { genre: Genre 
     }
   };
 
+  // Update audio when genre changes
   useEffect(() => {
-    if (isPlaying) {
-      // If a song is playing, fade out the current song first
-      fadeOut().then(() => {
-        // After fade out, switch to the new genre's song
+    const updateAudio = async () => {
+      if (isPlaying) {
+        await fadeOut();
         const newAudioFile = getRandomSong(genre);
         setAudioFile(newAudioFile);
-        audioRef.current.src = newAudioFile;
-        fadeIn();
-      });
-    } else {
-      // If not playing, simply switch the audio source
-      const newAudioFile = getRandomSong(genre);
-      setAudioFile(newAudioFile);
-      audioRef.current.src = newAudioFile;
-    }
+        await fadeIn();
+      } else {
+        const newAudioFile = getRandomSong(genre);
+        setAudioFile(newAudioFile);
+      }
+    };
+    updateAudio();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [genre]); // Trigger when genre changes
+  }, [genre]);
 
+  // Clean up event listeners
   useEffect(() => {
     const audio = audioRef.current;
-    const handleAudioEnd = () => setIsPlaying(false);
-    audio.addEventListener('ended', handleAudioEnd);
-
-    return () => {
-      audio.removeEventListener('ended', handleAudioEnd);
-    };
+    if (audio) {
+      const handleAudioEnd = () => setIsPlaying(false);
+      audio.addEventListener('ended', handleAudioEnd);
+      return () => {
+        audio.removeEventListener('ended', handleAudioEnd);
+      };
+    }
   }, []);
 
   return (
     <div className="flex flex-col items-center space-y-4">
       <button
         className={
-          props.className +
+          restProps.className +
           ' ' +
           'font-bold py-2 px-6 rounded shadow hover:scale-105 transition-transform duration-200 '
         }
